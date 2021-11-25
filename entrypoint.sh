@@ -1,9 +1,9 @@
 #!/bin/bash
 function onExit {
-    pg_ctl -D /var/lib/postgresql/9.6/data stop -w
+    service postgresql stop
 }
 trap onExit EXIT
 
-pg_ctl -D /var/lib/postgresql/9.6/data start -w
+service postgresql start
 $@
 exit $?
