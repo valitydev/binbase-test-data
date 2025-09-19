@@ -4,17 +4,15 @@ USER root
 RUN apt update \
     && apt install -y \
     postgresql \
-    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY data /opt/binbase-test-data/data
-RUN unzip /opt/binbase-test-data/data/\*.zip -d /opt/binbase-test-data/data/unzip
 
 USER postgres
 RUN service postgresql start \
     && psql --command "CREATE DATABASE binbase;" \
     && psql --command "ALTER USER postgres WITH SUPERUSER PASSWORD 'postgres';" \
-    && java -jar /opt/binbase/binbase.jar dev.vality.binbase.config.BatchConfig binBaseJob --logging.level.dev.vality.binbase=ERROR --logging.level.dev.vality.binbase.batch.listener.DefaultChunkListener=INFO --batch.file_path=file:/opt/binbase-test-data/data/unzip --batch.shutdown_after_execute=true  --server.port=0 --batch.strict_mode=false \
+    && java -jar /opt/binbase/binbase.jar dev.vality.binbase.config.BatchConfig binBaseJob --logging.level.dev.vality.binbase=ERROR --logging.level.dev.vality.binbase.batch.listener.DefaultChunkListener=INFO --batch.file_path=file:/opt/binbase-test-data/data --batch.shutdown_after_execute=true  --server.port=0 --batch.strict_mode=false \
     && psql --command "SELECT pg_size_pretty(pg_database_size('binbase'));" \
     && psql --command "VACUUM FULL;" \
     && psql --command "SELECT pg_size_pretty(pg_database_size('binbase'));" \
