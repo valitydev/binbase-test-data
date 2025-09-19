@@ -1,0 +1,23 @@
+name: Deploy Docker Image
+
+on:
+  push:
+    branches:
+      - "master"
+      - "main"
+      - "epic/*"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy image
+        uses: valitydev/action-deploy-docker@v2
+        with:
+          registry-username: ${{ github.actor }}
+          registry-access-token: ${{ secrets.GITHUB_TOKEN }}
